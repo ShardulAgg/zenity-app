@@ -1,0 +1,12 @@
+# compiled binaries from `go build` at the repo root (anchored so they don't
+# match the cmd/broker, internal/worker, etc. directories)
+/zenity
+/ingest
+/worker
+/broker
+*.exe
+/bin/
+
+# OS / editor
+.DS_Store
+*.swp
