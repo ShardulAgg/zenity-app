@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ingest
+  labels:
+    app: ingest
+spec:
+  replicas: 1 # SINGLETON — one firehose connection; never scale this out
+  selector:
+    matchLabels:
+      app: ingest
+  template:
+    metadata:
+      labels:
+        app: ingest
+    spec:
+      containers:
+        - name: ingest
+          image: zenity-ingest:dev
+          imagePullPolicy: IfNotPresent # use the image kind-loaded locally
+          env:
+            - { name: BROKER_ADDR, value: "broker:9000" }
+          resources:
+            requests: { cpu: "50m", memory: "32Mi" }
+            limits: { cpu: "250m", memory: "128Mi" }

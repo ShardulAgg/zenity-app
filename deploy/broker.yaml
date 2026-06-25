@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: broker
+  labels:
+    app: broker
+spec:
+  replicas: 1 # our broker is a single instance (no clustering — see DESIGN)
+  selector:
+    matchLabels:
+      app: broker
+  template:
+    metadata:
+      labels:
+        app: broker
+    spec:
+      containers:
+        - name: broker
+          image: zenity-broker:dev
+          imagePullPolicy: IfNotPresent
+          ports:
+            - { containerPort: 9000, name: client }
+          readinessProbe:
+            tcpSocket: { port: 9000 }
+            initialDelaySeconds: 1
+            periodSeconds: 5
+          resources:
+            requests: { cpu: "50m", memory: "32Mi" }
+            limits: { cpu: "250m", memory: "128Mi" }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: broker
+spec:
+  selector:
+    app: broker
+  ports:
+    - { name: client, port: 9000, targetPort: 9000 }

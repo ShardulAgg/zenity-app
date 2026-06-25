@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker
+  labels:
+    app: worker
+spec:
+  replicas: 1 # scale freely: kubectl scale deployment worker --replicas=N
+  selector:
+    matchLabels:
+      app: worker
+  template:
+    metadata:
+      labels:
+        app: worker
+    spec:
+      containers:
+        - name: worker
+          image: zenity-worker:dev
+          imagePullPolicy: IfNotPresent
+          env:
+            - { name: BROKER_ADDR, value: "broker:9000" }
+          resources:
+            requests: { cpu: "50m", memory: "32Mi" }
+            limits: { cpu: "250m", memory: "128Mi" }
